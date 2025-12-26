@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Grand+Hotel&family=Roboto:wght@300;400;500&display=swap');
+
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #262626;
+  background-color: #fafafa;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* Reset basics */
+* {
+  box-sizing: border-box;
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 350px;
+  max-width: 100%;
+}
+
+.insta-card {
+  background-color: #fff;
+  border: 1px solid #dbdbdb;
+  border-radius: 1px;
+  padding: 2rem;
+  width: 100%;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.insta-logo {
+  font-family: 'Grand Hotel', cursive;
+  font-size: 3rem;
+  margin: 1.5rem 0;
+  font-weight: normal;
+}
+
+.insta-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-field {
+  margin-bottom: 6px;
+}
+
+input {
+  width: 100%;
+  background: #fafafa;
+  border: 1px solid #dbdbdb;
+  border-radius: 3px;
+  padding: 9px 8px 7px;
+  font-size: 14px;
+  color: #262626;
+}
+
+input:focus {
+  border: 1px solid #a8a8a8;
+  outline: none;
+}
+
+.insta-btn {
+  background-color: #0095f6;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  padding: 5px 9px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  height: 32px;
+}
+
+.insta-btn:disabled {
+  background-color: #b2dffc;
+  cursor: default;
+}
+
+.divider {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px 0 18px;
+  width: 100%;
+}
+
+.line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #dbdbdb;
+}
+
+.or {
+  color: #8e8e8e;
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0 18px;
+}
+
+.fb-login {
+  background: none;
+  border: none;
+  color: #385185;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+
+.forgot-password {
+  color: #00376b;
+  font-size: 12px;
+  text-decoration: none;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.signup-box {
+  padding: 20px;
+  text-align: center;
+}
+
+.signup-box p {
+  font-size: 14px;
+  margin: 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: #0095f6;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.error-msg {
+  color: #ed4956;
+  font-size: 14px;
+  text-align: center;
+  margin: 10px 0;
+}

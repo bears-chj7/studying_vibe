@@ -1,0 +1,90 @@
+import { useState } from 'react';
+
+const Login = ({ onLogin, onSwitchToRegister }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
+
+        try {
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Assuming backend returns user_id or similar, but for now we just pass a name
+                const username = email.split('@')[0];
+                onLogin(username);
+            } else {
+                setError(data.error || 'Login failed.');
+            }
+        } catch (err) {
+            setError('An error occurred. Please try again.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="login-container">
+            <div className="insta-card">
+                <h1 className="insta-logo">Instagram</h1>
+                <form onSubmit={handleSubmit} className="insta-form">
+                    <div className="input-field">
+                        <input
+                            type="text"
+                            placeholder="Phone number, username, or email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <div className="input-field">
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
+                    <button type="submit" className="insta-btn" disabled={!email || !password || isLoading}>
+                        {isLoading ? 'Logging in...' : 'Log in'}
+                    </button>
+
+                    {error && <p className="error-msg">{error}</p>}
+
+                    <div className="divider">
+                        <div className="line"></div>
+                        <div className="or">OR</div>
+                        <div className="line"></div>
+                    </div>
+
+                    <button type="button" className="fb-login">
+                        Log in with Facebook
+                    </button>
+                    <a href="#" className="forgot-password">Forgot password?</a>
+                </form>
+            </div>
+
+            <div className="insta-card signup-box">
+                <p>
+                    Don't have an account? <button className="link-btn" onClick={onSwitchToRegister}>Sign up</button>
+                </p>
+            </div>
+        </div>
+    );
+};
+
+export default Login;
