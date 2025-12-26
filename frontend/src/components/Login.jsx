@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const Login = ({ onLogin, onSwitchToRegister }) => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -17,15 +17,14 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ username, password }),
             });
 
             const data = await response.json();
 
             if (response.ok) {
-                // Assuming backend returns user_id or similar, but for now we just pass a name
-                const username = email.split('@')[0];
-                onLogin(username);
+                // Pass the real name returned from backend
+                onLogin(data.name);
             } else {
                 setError(data.error || 'Login failed.');
             }
@@ -45,8 +44,8 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                         <input
                             type="text"
                             placeholder="Phone number, username, or email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             required
                         />
                     </div>
@@ -59,7 +58,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                             required
                         />
                     </div>
-                    <button type="submit" className="insta-btn" disabled={!email || !password || isLoading}>
+                    <button type="submit" className="insta-btn" disabled={!username || !password || isLoading}>
                         {isLoading ? 'Logging in...' : 'Log in'}
                     </button>
 

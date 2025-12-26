@@ -26,7 +26,7 @@ function App() {
 
     return (
         <div className="App">
-            <h1>React + Flask MariaDB Auth</h1>
+            <h1>Heyonjoon's<br /> Vibo Coding Play Ground</h1>
             {view === 'login' ? (
                 <Login onLogin={handleLogin} onSwitchToRegister={() => setView('register')} />
             ) : (

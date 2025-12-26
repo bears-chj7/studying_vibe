@@ -23,11 +23,16 @@ def hash_password(password):
 @app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
-    email = data.get('email')
+    name = data.get('name')
+    username = data.get('username')
     password = data.get('password')
+    confirm_password = data.get('confirm_password')
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+    if not name or not username or not password or not confirm_password:
+        return jsonify({"error": "All fields are required"}), 400
+
+    if password != confirm_password:
+        return jsonify({"error": "Passwords do not match"}), 400
 
     hashed_password = hash_password(password)
 
@@ -35,7 +40,7 @@ def register():
     if conn:
         try:
             cursor = conn.cursor()
-            cursor.execute("INSERT INTO users (email, password_hash) VALUES (%s, %s)", (email, hashed_password))
+            cursor.execute("INSERT INTO users (name, username, password_hash) VALUES (%s, %s, %s)", (name, username, hashed_password))
             conn.commit()
             return jsonify({"message": "User created successfully"}), 201
         except Error as e:
@@ -48,11 +53,11 @@ def register():
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
-    email = data.get('email')
+    username = data.get('username')
     password = data.get('password')
 
-    if not email or not password:
-        return jsonify({"error": "Email and password are required"}), 400
+    if not username or not password:
+        return jsonify({"error": "Username and password are required"}), 400
 
     hashed_password = hash_password(password)
 
@@ -60,13 +65,13 @@ def login():
     if conn:
         try:
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM users WHERE email = %s AND password_hash = %s", (email, hashed_password))
+            cursor.execute("SELECT * FROM users WHERE username = %s AND password_hash = %s", (username, hashed_password))
             user = cursor.fetchone()
 
             if user:
-                return jsonify({"message": "Login successful", "user_id": user['id']}), 200
+                return jsonify({"message": "Login successful", "user_id": user['id'], "name": user['name']}), 200
             else:
-                return jsonify({"error": "Invalid email or password"}), 401
+                return jsonify({"error": "Invalid username or password"}), 401
         except Error as e:
             return jsonify({"error": str(e)}), 500
         finally:

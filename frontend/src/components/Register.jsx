@@ -1,8 +1,10 @@
 import { useState } from 'react';
 
 const Register = ({ onSwitchToLogin }) => {
-    const [email, setEmail] = useState('');
+    const [username, setUsername] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -13,13 +15,19 @@ const Register = ({ onSwitchToLogin }) => {
         setError('');
         setMessage('');
 
+        if (password !== confirmPassword) {
+            setError("Passwords do not match");
+            setIsLoading(false);
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:5000/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ name, username, password, confirm_password: confirmPassword }),
             });
 
             const data = await response.json();
@@ -61,10 +69,10 @@ const Register = ({ onSwitchToLogin }) => {
                 <form onSubmit={handleSubmit} className="insta-form">
                     <div className="input-field">
                         <input
-                            type="email"
-                            placeholder="Mobile Number or Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                             required
                         />
                     </div>
@@ -72,12 +80,9 @@ const Register = ({ onSwitchToLogin }) => {
                         <input
                             type="text"
                             placeholder="Full Name"
-                        />
-                    </div>
-                    <div className="input-field">
-                        <input
-                            type="text"
-                            placeholder="Username"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            required
                         />
                     </div>
                     <div className="input-field">
@@ -89,12 +94,21 @@ const Register = ({ onSwitchToLogin }) => {
                             required
                         />
                     </div>
+                    <div className="input-field">
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            required
+                        />
+                    </div>
 
                     <p style={{ fontSize: '12px', color: '#8e8e8e', textAlign: 'center', margin: '15px 0' }}>
                         People who use our service may have uploaded your contact information to Instagram. <a href="#" style={{ fontWeight: '600', color: '#8e8e8e', textDecoration: 'none' }}>Learn More</a>
                     </p>
 
-                    <button type="submit" className="insta-btn" disabled={!email || !password || isLoading}>
+                    <button type="submit" className="insta-btn" disabled={!username || !name || !password || !confirmPassword || isLoading}>
                         {isLoading ? 'Signing up...' : 'Sign up'}
                     </button>
                 </form>

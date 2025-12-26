@@ -12,9 +12,9 @@ def create_connection():
     connection = None
     try:
         connection = mysql.connector.connect(
-            host=os.getenv('DB_HOST', '127.0.0.1'),
-            database=os.getenv('DB_NAME', 'my_app_db'),
-            user=os.getenv('DB_USER', 'root'),
+            host=os.getenv('DB_HOST'),
+            database=os.getenv('DB_NAME'),
+            user=os.getenv('DB_USER'),
             password=os.getenv('DB_PASSWORD')
         )
         if connection.is_connected():
