@@ -41,12 +41,7 @@ body {
   align-items: center;
 }
 
-.insta-logo {
-  font-family: 'Grand Hotel', cursive;
-  font-size: 3rem;
-  margin: 1.5rem 0;
-  font-weight: normal;
-}
+
 
 .insta-form {
   width: 100%;

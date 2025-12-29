@@ -38,7 +38,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     return (
         <div className="login-container">
             <div className="insta-card">
-                <h1 className="insta-logo">Instagram</h1>
+
                 <form onSubmit={handleSubmit} className="insta-form">
                     <div className="input-field">
                         <input

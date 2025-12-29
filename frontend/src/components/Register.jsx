@@ -48,7 +48,7 @@ const Register = ({ onSwitchToLogin }) => {
     return (
         <div className="login-container">
             <div className="insta-card">
-                <h1 className="insta-logo">Instagram</h1>
+
                 <h2 style={{ fontSize: '17px', fontWeight: '600', color: '#8e8e8e', textAlign: 'center', margin: '0 40px 20px' }}>
                     Sign up to see photos and videos from your friends.
                 </h2>
