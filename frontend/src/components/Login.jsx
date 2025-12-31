@@ -23,8 +23,8 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
             const data = await response.json();
 
             if (response.ok) {
-                // Pass the real name returned from backend
-                onLogin(data.name);
+                // Pass the user details returned from backend
+                onLogin({ name: data.name, role: data.role, username: username });
             } else {
                 setError(data.error || 'Login failed.');
             }

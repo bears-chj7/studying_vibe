@@ -17,3 +17,7 @@ coverage/
 
 # Config
 gemini.key
+
+# Datafile
+pdf/
+backend/chroma_db/

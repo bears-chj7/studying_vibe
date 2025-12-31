@@ -3,22 +3,23 @@ import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import Chat from './components/Chat.jsx';
 import Settings from './components/Settings.jsx';
+import Admin from './components/Admin.jsx';
 
 function App() {
-    const [token, setToken] = useState(null);
-    const [view, setView] = useState('login'); // 'login', 'register', 'settings'
+    const [user, setUser] = useState(null); // replaces token, stores full user obj
+    const [view, setView] = useState('login'); // 'login', 'register', 'settings', 'admin', 'chat'
 
-    const handleLogin = (userId) => {
-        setToken(userId); // storing user_id as token for simplicity in this demo
-        setView('chat'); // Reset view to chat on login
+    const handleLogin = (userData) => {
+        setUser(userData);
+        setView('chat');
     };
 
     const handleLogout = () => {
-        setToken(null);
+        setUser(null);
         setView('login');
     };
 
-    if (token) {
+    if (user) {
         if (view === 'settings') {
             return (
                 <div className="App">
@@ -26,9 +27,28 @@ function App() {
                 </div>
             );
         }
+        if (view === 'admin') {
+            return (
+                <div className="App">
+                    <Admin user={user} onBack={() => setView('chat')} />
+                </div>
+            );
+        }
         return (
             <div className="App">
-                <Chat onLogout={handleLogout} onOpenSettings={() => setView('settings')} />
+                <Chat
+                    onLogout={handleLogout}
+                    onOpenSettings={() => setView('settings')}
+                    user={user}
+                />
+                {user.role === 'admin' && (
+                    <button
+                        onClick={() => setView('admin')}
+                        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000, padding: '10px', background: 'red', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
+                    >
+                        Admin Panel
+                    </button>
+                )}
             </div>
         );
     }

@@ -4,8 +4,10 @@ import os
 from database import create_connection
 from mysql.connector import Error
 import hashlib
+from rag import RAGService
 
 app = Flask(__name__)
+rag_service = RAGService()
 
 # Basic CORS workaround (for production use flask-cors)
 @app.after_request
@@ -42,6 +44,7 @@ def register():
     if conn:
         try:
             cursor = conn.cursor()
+            # Default role is 'user', unless specified otherwise (not exposed in API)
             cursor.execute("INSERT INTO users (name, username, password_hash) VALUES (%s, %s, %s)", (name, username, hashed_password))
             conn.commit()
             return jsonify({"message": "User created successfully"}), 201
@@ -71,7 +74,12 @@ def login():
             user = cursor.fetchone()
 
             if user:
-                return jsonify({"message": "Login successful", "user_id": user['id'], "name": user['name']}), 200
+                return jsonify({
+                    "message": "Login successful", 
+                    "user_id": user['id'], 
+                    "name": user['name'],
+                    "role": user.get('role', 'user') 
+                }), 200
             else:
                 return jsonify({"error": "Invalid username or password"}), 401
         except Error as e:
@@ -80,6 +88,37 @@ def login():
             conn.close()
     else:
         return jsonify({"error": "Database connection failed"}), 500
+
+@app.route('/api/admin/ingest', methods=['POST'])
+def ingest_pdfs():
+    # Check if user is admin (simple check via header or body for now, ideally JWT)
+    # Since we don't have JWT, we check the username/role sent in the request or assume frontend handles it safely-ish?
+    # Without proper session/token, we'll ask for username in the body to verify db role again for security.
+    data = request.get_json()
+    username = data.get('username')
+    
+    if not username:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    conn = create_connection()
+    if conn:
+        try:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("SELECT role FROM users WHERE username = %s", (username,))
+            user = cursor.fetchone()
+            if not user or user['role'] != 'admin':
+                return jsonify({"error": "Forbidden: Admins only"}), 403
+        finally:
+            conn.close()
+    
+    pdf_dir = "../pdf" # relative to backend
+    if not os.path.exists(pdf_dir):
+         # Try absolute path
+         pdf_dir = "/home/judgejack/working_space/studying_vibe/pdf"
+    
+    result = rag_service.ingest_pdfs(pdf_dir)
+    return jsonify(result)
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     data = request.get_json()
@@ -88,6 +127,16 @@ def chat():
 
     if not user_message:
         return jsonify({"error": "Message is required"}), 400
+
+    # Retrieve context from RAG
+    # We always use RAG context if available, or we could make it optional.
+    # User said "Use this data for RAG service", so we assume always.
+    context_docs = rag_service.query(user_message)
+    context_text = "\n\n".join(context_docs)
+    
+    # Construct prompt with context
+    system_prompt = "You are a helpful assistant for college admissions. Use the following context to answer the user's question if relevant. If the answer is not in the context, use your general knowledge but mention that it's not from the provided documents."
+    full_prompt = f"{system_prompt}\n\nContext:\n{context_text}\n\nUser Question:\n{user_message}"
 
     if model == 'gemini':
         try:
@@ -110,7 +159,7 @@ def chat():
             url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
             payload = {
                 "contents": [{
-                    "parts": [{"text": user_message}]
+                    "parts": [{"text": full_prompt}] 
                 }]
             }
             
@@ -137,7 +186,7 @@ def chat():
 
     else:
         # Default to Ollama (llama2 or specified model)
-        # Using llama3.2:1b as requested for "ollama" option default, but passing through 'model' param if it's an ollama model name
+        # Using llama3.2:1b as requested for "ollama" option default
         ollama_model = "llama3.2:1b"
         
         try:
@@ -146,7 +195,7 @@ def chat():
                 'http://localhost:11434/api/generate',
                 json={
                     "model": ollama_model,
-                    "prompt": user_message,
+                    "prompt": full_prompt, # Use the prompt with context
                     "stream": False
                 }
             )
