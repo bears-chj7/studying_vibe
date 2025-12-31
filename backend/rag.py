@@ -6,9 +6,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import shutil
 
 class RAGService:
-    def __init__(self, persist_directory="./chroma_db"):
+    def __init__(self, persist_directory="./chroma_db_v2"):
         self.persist_directory = persist_directory
-        self.embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
+        self.embedding_function = SentenceTransformerEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         self.db = Chroma(persist_directory=self.persist_directory, embedding_function=self.embedding_function)
 
     def ingest_file(self, file_path):
@@ -82,7 +82,7 @@ class RAGService:
                 results.append(msg)
         return {"status": "success", "messages": results}
 
-    def query(self, query_text, k=3):
+    def query(self, query_text, k=10):
         """Retrieves relevant context for the query."""
         results = self.db.similarity_search(query_text, k=k)
         return [doc.page_content for doc in results]

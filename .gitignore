@@ -21,3 +21,4 @@ gemini.key
 # Datafile
 pdf/
 backend/chroma_db/
+backend/chroma_db_v2/

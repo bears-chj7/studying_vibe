@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Chat = ({ onLogout, onOpenSettings }) => {
@@ -8,12 +8,22 @@ const Chat = ({ onLogout, onOpenSettings }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [currentModel, setCurrentModel] = useState('ollama');
 
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
     useEffect(() => {
         const storedModel = localStorage.getItem('chatModel');
         if (storedModel) {
             setCurrentModel(storedModel);
         }
     }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
 
     const sendMessage = async (e) => {
         e.preventDefault();
@@ -80,6 +90,7 @@ const Chat = ({ onLogout, onOpenSettings }) => {
                     </div>
                 ))}
                 {isLoading && <div style={styles.loading}>{currentModel} is thinking...</div>}
+                <div ref={messagesEndRef} />
             </div>
 
             <form onSubmit={sendMessage} style={styles.inputArea}>

@@ -129,7 +129,7 @@ def chat():
     context_text = "\n\n".join(context_docs)
     
     # Construct prompt with context
-    system_prompt = "You are a helpful assistant for college admissions. Use the following context to answer the user's question if relevant. If the answer is not in the context, use your general knowledge but mention that it's not from the provided documents."
+    system_prompt = "당신은 대학 입시를 돕는 유용한 도우미입니다. 다음 문맥을 사용하여 사용자의 질문에 답하세요. 만약 문맥에 정답이 없다면 일반적인 지식을 사용하되, 제공된 문서에서 나온 정보가 아님을 언급하세요. 모든 답변은 한국어로 작성해야 합니다."
     full_prompt = f"{system_prompt}\n\nContext:\n{context_text}\n\nUser Question:\n{user_message}"
 
     if model == 'gemini':
