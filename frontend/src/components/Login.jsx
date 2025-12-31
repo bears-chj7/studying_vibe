@@ -24,7 +24,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
 
             if (response.ok) {
                 // Pass the user details returned from backend
-                onLogin({ name: data.name, role: data.role, username: username });
+                onLogin({ name: data.name, username: username, attributes: data.attributes });
             } else {
                 setError(data.error || 'Login failed.');
             }

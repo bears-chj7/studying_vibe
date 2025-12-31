@@ -11,32 +11,76 @@ class RAGService:
         self.embedding_function = SentenceTransformerEmbeddings(model_name="all-MiniLM-L6-v2")
         self.db = Chroma(persist_directory=self.persist_directory, embedding_function=self.embedding_function)
 
+    def ingest_file(self, file_path):
+        """Ingests a single PDF file with idempotent IDs."""
+        if not file_path.endswith(".pdf"):
+            return False, "Not a PDF file"
+            
+        try:
+            loader = PyPDFLoader(file_path)
+            documents = loader.load()
+            
+            if not documents:
+                return False, "No content found in PDF"
+
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+            chunks = text_splitter.split_documents(documents)
+            
+            # Generate unique IDs based on filename and chunk index to prevent duplicates
+            filename = os.path.basename(file_path)
+            ids = [f"{filename}_{i}" for i in range(len(chunks))]
+            
+            # Add metadata for deletion
+            for chunk in chunks:
+                chunk.metadata['source_file'] = filename
+                
+            self.db.add_documents(chunks, ids=ids)
+            return True, f"Ingested {len(chunks)} chunks from {filename}"
+            
+        except Exception as e:
+            return False, str(e)
+
+    def delete_file(self, filename):
+        """Removes documents associated with a specific file."""
+        try:
+            # chroma delete by metadata
+            self.db._collection.delete(where={"source_file": filename})
+            return True, f"Deleted content for {filename}"
+        except Exception as e:
+            return False, str(e)
+
+    def get_chunks_by_filename(self, filename: str):
+        """
+        Retrieves all chunks for a specific file from the vector store.
+        Returns a list of dicts with 'content' and 'metadata'.
+        """
+        try:
+            results = self.db._collection.get(where={"source_file": filename})
+            
+            # Chroma 'get' returns: {'ids': [], 'embeddings': None, 'documents': [], 'metadatas': []}
+            chunks = []
+            if results['ids']:
+                for i in range(len(results['ids'])):
+                    chunks.append({
+                        "id": results['ids'][i],
+                        "content": results['documents'][i],
+                        "metadata": results['metadatas'][i]
+                    })
+            return chunks
+        except Exception as e:
+            print(f"Error fetching chunks: {e}")
+            return []
+
     def ingest_pdfs(self, pdf_directory):
-        """Loads PDFs from the directory, splits them, and adds to the vector store."""
-        documents = []
+        """(Legacy) Loads PDFs from the directory."""
+        # Adapted to use new ingest_file for consistency
+        results = []
         for filename in os.listdir(pdf_directory):
             if filename.endswith(".pdf"):
                 file_path = os.path.join(pdf_directory, filename)
-                try:
-                    loader = PyPDFLoader(file_path)
-                    documents.extend(loader.load())
-                except Exception as e:
-                    print(f"Error loading {filename}: {e}")
-
-        if not documents:
-            return {"status": "warning", "message": "No documents found or loaded."}
-
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        chunks = text_splitter.split_documents(documents)
-
-        # Create new DB from documents (updating existing one)
-        # using from_documents is easier but we might want to add.
-        # calls self.db.add_documents if we want to append.
-        
-        self.db.add_documents(chunks)
-        # self.db.persist() # Chroma 0.4+ persists automatically or needs explicit call depending on version, usually auto if path provided.
-        
-        return {"status": "success", "message": f"Ingested {len(documents)} documents into {len(chunks)} chunks."}
+                success, msg = self.ingest_file(file_path)
+                results.append(msg)
+        return {"status": "success", "messages": results}
 
     def query(self, query_text, k=3):
         """Retrieves relevant context for the query."""

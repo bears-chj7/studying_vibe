@@ -2,8 +2,11 @@ import { useState } from 'react';
 import Login from './components/Login.jsx';
 import Register from './components/Register.jsx';
 import Chat from './components/Chat.jsx';
+import MainLayout from './components/MainLayout.jsx';
+import UserInfo from './components/UserInfo.jsx';
+import DocumentManager from './components/DocumentManager.jsx';
+import UserManager from './components/UserManager.jsx';
 import Settings from './components/Settings.jsx';
-import Admin from './components/Admin.jsx';
 
 function App() {
     const [user, setUser] = useState(null); // replaces token, stores full user obj
@@ -20,42 +23,26 @@ function App() {
     };
 
     if (user) {
-        if (view === 'settings') {
-            return (
-                <div className="App">
-                    <Settings onBack={() => setView('chat')} />
-                </div>
-            );
-        }
-        if (view === 'admin') {
-            return (
-                <div className="App">
-                    <Admin user={user} onBack={() => setView('chat')} />
-                </div>
-            );
-        }
         return (
-            <div className="App">
-                <Chat
-                    onLogout={handleLogout}
-                    onOpenSettings={() => setView('settings')}
-                    user={user}
-                />
-                {user.role === 'admin' && (
-                    <button
-                        onClick={() => setView('admin')}
-                        style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000, padding: '10px', background: 'red', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}
-                    >
-                        Admin Panel
-                    </button>
-                )}
-            </div>
+            <MainLayout
+                user={user}
+                currentView={view}
+                onViewChange={setView}
+                onLogout={handleLogout}
+            >
+                {view === 'chat' && <Chat user={user} onOpenSettings={() => setView('settings')} />}
+                {view === 'user-info' && <UserInfo user={user} />}
+                {view === 'documents' && <DocumentManager user={user} />}
+                {view === 'users' && <UserManager user={user} />}
+                {view === 'settings' && <Settings onBack={() => setView('chat')} />}
+                {/* Fallback or other views */}
+            </MainLayout>
         );
     }
 
     return (
         <div className="App">
-            <h1>Heyonjoon's<br /> Vibo Coding Play Ground</h1>
+            <h1 className="landing-title">Heyonjoon's Vibo Coding Play Ground</h1>
             {view === 'login' ? (
                 <Login onLogin={handleLogin} onSwitchToRegister={() => setView('register')} />
             ) : (

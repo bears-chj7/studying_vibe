@@ -17,7 +17,7 @@ const Settings = ({ onBack }) => {
 
     return (
         <div style={styles.container}>
-            <div style={styles.card}>
+            <div className="insta-card">
                 <h2 style={styles.title}>Settings</h2>
 
                 <div style={styles.field}>
@@ -33,8 +33,8 @@ const Settings = ({ onBack }) => {
                 </div>
 
                 <div style={styles.buttons}>
-                    <button onClick={onBack} style={styles.cancelBtn}>Cancel</button>
-                    <button onClick={handleSave} style={styles.saveBtn}>Save</button>
+                    <button onClick={onBack} className="insta-btn" style={{ background: 'transparent', color: '#262626', border: '1px solid #dbdbdb' }}>Cancel</button>
+                    <button onClick={handleSave} className="insta-btn" style={{ marginLeft: '10px' }}>Save</button>
                 </div>
             </div>
         </div>

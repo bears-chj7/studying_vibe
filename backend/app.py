@@ -5,8 +5,14 @@ from database import create_connection
 from mysql.connector import Error
 import hashlib
 from rag import RAGService
+from blueprints.documents import documents_bp
+from blueprints.users import users_bp
 
 app = Flask(__name__)
+# Register Blueprints
+app.register_blueprint(documents_bp)
+app.register_blueprint(users_bp)
+
 rag_service = RAGService()
 
 # Basic CORS workaround (for production use flask-cors)
@@ -44,7 +50,8 @@ def register():
     if conn:
         try:
             cursor = conn.cursor()
-            # Default role is 'user', unless specified otherwise (not exposed in API)
+            # Default role is 'user' logic removed as column is gone. 
+            # New users start with no attributes, or we can seed default attributes here if needed.
             cursor.execute("INSERT INTO users (name, username, password_hash) VALUES (%s, %s, %s)", (name, username, hashed_password))
             conn.commit()
             return jsonify({"message": "User created successfully"}), 201
@@ -74,11 +81,23 @@ def login():
             user = cursor.fetchone()
 
             if user:
+                # Fetch all attributes for frontend capabilities
+                cursor.execute("SELECT attr_key, attr_value FROM user_attributes WHERE user_id = %s", (user['id'],))
+                attr_rows = cursor.fetchall()
+                
+                user_attributes = {}
+                for row in attr_rows:
+                    k = row['attr_key']
+                    v = row['attr_value']
+                    if k not in user_attributes:
+                        user_attributes[k] = []
+                    user_attributes[k].append(v)
+
                 return jsonify({
                     "message": "Login successful", 
                     "user_id": user['id'], 
                     "name": user['name'],
-                    "role": user.get('role', 'user') 
+                    "attributes": user_attributes
                 }), 200
             else:
                 return jsonify({"error": "Invalid username or password"}), 401
@@ -89,35 +108,10 @@ def login():
     else:
         return jsonify({"error": "Database connection failed"}), 500
 
-@app.route('/api/admin/ingest', methods=['POST'])
-def ingest_pdfs():
-    # Check if user is admin (simple check via header or body for now, ideally JWT)
-    # Since we don't have JWT, we check the username/role sent in the request or assume frontend handles it safely-ish?
-    # Without proper session/token, we'll ask for username in the body to verify db role again for security.
-    data = request.get_json()
-    username = data.get('username')
-    
-    if not username:
-        return jsonify({"error": "Unauthorized"}), 401
+# /api/admin/ingest is replaced by the documents blueprint APIs
+# We keep the function for now if needed for legacy tests but it's largely redundant.
+# Or better, let's remove it to avoid confusion as per plan.
 
-    conn = create_connection()
-    if conn:
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT role FROM users WHERE username = %s", (username,))
-            user = cursor.fetchone()
-            if not user or user['role'] != 'admin':
-                return jsonify({"error": "Forbidden: Admins only"}), 403
-        finally:
-            conn.close()
-    
-    pdf_dir = "../pdf" # relative to backend
-    if not os.path.exists(pdf_dir):
-         # Try absolute path
-         pdf_dir = "/home/judgejack/working_space/studying_vibe/pdf"
-    
-    result = rag_service.ingest_pdfs(pdf_dir)
-    return jsonify(result)
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
