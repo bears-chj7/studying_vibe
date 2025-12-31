@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Chat = ({ onLogout, onOpenSettings }) => {
+    const { t } = useTranslation();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -57,12 +59,12 @@ const Chat = ({ onLogout, onOpenSettings }) => {
         <div style={styles.container}>
             <div style={styles.header}>
                 <div style={styles.headerTitle}>
-                    <h2>Chat</h2>
-                    <span style={styles.modelBadge}>{currentModel === 'ollama' ? 'Llama 3.2:1b' : 'Gemini'}</span>
+                    <h2>{t('chat.title')}</h2>
+                    <span style={styles.modelBadge}>{t('chat.model_display', { model: currentModel === 'ollama' ? 'Llama 3.2:1b' : 'Gemini' })}</span>
                 </div>
                 <div>
-                    <button onClick={onOpenSettings} style={styles.settingsBtn}>Settings</button>
-                    <button onClick={onLogout} style={styles.logoutBtn}>Logout</button>
+                    <button onClick={onOpenSettings} style={styles.settingsBtn}>{t('sidebar.menu_settings')}</button>
+                    <button onClick={onLogout} style={styles.logoutBtn}>{t('sidebar.btn_logout')}</button>
                 </div>
             </div>
 
@@ -85,11 +87,11 @@ const Chat = ({ onLogout, onOpenSettings }) => {
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder={`Message ${currentModel}...`}
+                    placeholder={t('chat.placeholder_message')}
                     style={styles.input}
                     disabled={isLoading}
                 />
-                <button type="submit" style={styles.sendBtn} disabled={isLoading}>Send</button>
+                <button type="submit" style={styles.sendBtn} disabled={isLoading}>{t('chat.btn_send')}</button>
             </form>
         </div>
     );
@@ -98,21 +100,21 @@ const Chat = ({ onLogout, onOpenSettings }) => {
 const styles = {
     container: {
         width: '100%',
-        maxWidth: '600px',
-        margin: '20px auto',
-        border: '1px solid #dbdbdb',
-        borderRadius: '3px',
-        backgroundColor: 'white',
+        height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        height: '600px',
+        backgroundColor: '#fff',
+        // Removed borders and rounded corners for full-screen feel, or keep them if it's a "card"
+        // Let's make it fill the parent container (which is now full width)
+        position: 'relative',
     },
     header: {
-        padding: '10px 20px',
-        borderBottom: '1px solid #dbdbdb',
+        padding: '1.5rem 2rem',
+        borderBottom: '1px solid #efefef',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        backgroundColor: '#fff',
     },
     headerTitle: {
         display: 'flex',
@@ -144,17 +146,20 @@ const styles = {
     },
     chatWindow: {
         flex: 1,
-        padding: '20px',
+        padding: '2rem',
         overflowY: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        gap: '10px',
+        gap: '1.5rem',
+        backgroundColor: '#fafafa',
     },
     message: {
-        maxWidth: '70%',
-        padding: '10px',
-        borderRadius: '8px',
-        wordWrap: 'break-word',
+        maxWidth: '80%', // Slightly wider
+        padding: '12px 18px',
+        borderRadius: '20px', // More rounded bubble look
+        lineHeight: '1.5',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+        fontSize: '15px',
     },
     loading: {
         alignSelf: 'flex-start',
@@ -162,26 +167,32 @@ const styles = {
         fontStyle: 'italic',
     },
     inputArea: {
-        padding: '10px',
-        borderTop: '1px solid #dbdbdb',
+        padding: '1.5rem',
+        borderTop: '1px solid #efefef',
         display: 'flex',
-        gap: '10px',
+        gap: '1rem',
+        backgroundColor: '#fff',
+        alignItems: 'center',
     },
     input: {
         flex: 1,
-        padding: '8px',
+        padding: '14px',
         border: '1px solid #dbdbdb',
-        borderRadius: '3px',
+        borderRadius: '25px', // Pill shape
         outline: 'none',
+        fontSize: '15px',
+        backgroundColor: '#fafafa',
     },
     sendBtn: {
-        padding: '8px 15px',
+        padding: '12px 24px',
         backgroundColor: '#0095f6',
         color: 'white',
         border: 'none',
-        borderRadius: '3px',
+        borderRadius: '25px', // Pill shape
         cursor: 'pointer',
         fontWeight: '600',
+        fontSize: '14px',
+        transition: 'background-color 0.2s',
     }
 };
 

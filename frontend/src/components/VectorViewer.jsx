@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const VectorViewer = ({ isOpen, onClose, filename, chunks, loading }) => {
+    const { t } = useTranslation();
     if (!isOpen) return null;
 
     return (
@@ -32,15 +34,15 @@ const VectorViewer = ({ isOpen, onClose, filename, chunks, loading }) => {
                     justifyContent: 'space-between',
                     alignItems: 'center'
                 }}>
-                    <h3 style={{ margin: 0, fontSize: '18px' }}>Vector Chunks: {filename}</h3>
+                    <h3 style={{ margin: 0, fontSize: '18px' }}>{t('vector_viewer.title', { filename })}</h3>
                     <button onClick={onClose} style={{ border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
                 </div>
 
                 <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', background: '#fafafa' }}>
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '2rem' }}>Loading chunks from Vector DB...</div>
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>{t('vector_viewer.loading')}</div>
                     ) : chunks.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '2rem' }}>No chunks found for this file.</div>
+                        <div style={{ textAlign: 'center', padding: '2rem' }}>{t('vector_viewer.no_chunks')}</div>
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             {chunks.map((chunk, idx) => (

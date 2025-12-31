@@ -1,13 +1,16 @@
 import React from 'react';
 import './MainLayout.css';
 
+import { useTranslation } from 'react-i18next';
+
 const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => {
+    const { t } = useTranslation();
     return (
         <div className="main-layout">
             <aside className="sidebar">
                 <div className="sidebar-header">
                     <h2>VIBE</h2>
-                    <p className="user-greeting">Hello, {user?.username}</p>
+                    <p className="user-greeting">{t('sidebar.greeting', { name: user?.username })}</p>
                 </div>
 
                 <nav className="sidebar-nav">
@@ -15,13 +18,13 @@ const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => 
                         className={`nav-item ${currentView === 'chat' ? 'active' : ''}`}
                         onClick={() => onViewChange('chat')}
                     >
-                        Chat
+                        {t('sidebar.menu_chat')}
                     </button>
                     <button
                         className={`nav-item ${currentView === 'user-info' ? 'active' : ''}`}
                         onClick={() => onViewChange('user-info')}
                     >
-                        User Info
+                        {t('sidebar.menu_user_info')}
                     </button>
                     {/* Document Manager Checks: access_page contains 'documents' */}
                     {/* Document Manager Checks: access_page contains 'documents' or 'document' */}
@@ -30,7 +33,7 @@ const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => 
                             className={`nav-item ${currentView === 'documents' ? 'active' : ''}`}
                             onClick={() => onViewChange('documents')}
                         >
-                            Documents
+                            {t('sidebar.menu_documents')}
                         </button>
                     )}
 
@@ -40,7 +43,7 @@ const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => 
                             className={`nav-item ${currentView === 'users' ? 'active' : ''}`}
                             onClick={() => onViewChange('users')}
                         >
-                            Users
+                            {t('sidebar.menu_users')}
                         </button>
                     )}
 
@@ -48,13 +51,13 @@ const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => 
                         className={`nav-item ${currentView === 'settings' ? 'active' : ''}`}
                         onClick={() => onViewChange('settings')}
                     >
-                        Settings
+                        {t('sidebar.menu_settings')}
                     </button>
                 </nav>
 
                 <div className="sidebar-footer">
                     <button className="logout-btn" onClick={onLogout}>
-                        Logout
+                        {t('sidebar.btn_logout')}
                     </button>
                 </div>
             </aside>

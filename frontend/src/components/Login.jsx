@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 const Login = ({ onLogin, onSwitchToRegister }) => {
+    const { t } = useTranslation();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -26,7 +29,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                 // Pass the user details returned from backend
                 onLogin({ name: data.name, username: username, attributes: data.attributes });
             } else {
-                setError(data.error || 'Login failed.');
+                setError(data.error || t('login.failed', 'Login failed.'));
             }
         } catch (err) {
             setError('An error occurred. Please try again.');
@@ -43,7 +46,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                     <div className="input-field">
                         <input
                             type="text"
-                            placeholder="Phone number, username, or email"
+                            placeholder={t('login.placeholder_username')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -52,34 +55,34 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
                     <div className="input-field">
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder={t('login.placeholder_password')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
                     </div>
                     <button type="submit" className="insta-btn" disabled={!username || !password || isLoading}>
-                        {isLoading ? 'Logging in...' : 'Log in'}
+                        {isLoading ? t('login.btn_logging_in') : t('login.btn_login')}
                     </button>
 
                     {error && <p className="error-msg">{error}</p>}
 
                     <div className="divider">
                         <div className="line"></div>
-                        <div className="or">OR</div>
+                        <div className="or">{t('login.or')}</div>
                         <div className="line"></div>
                     </div>
 
                     <button type="button" className="fb-login">
-                        Log in with Facebook
+                        {t('login.btn_facebook')}
                     </button>
-                    <a href="#" className="forgot-password">Forgot password?</a>
+                    <a href="#" className="forgot-password">{t('login.forgot_password')}</a>
                 </form>
             </div>
 
             <div className="insta-card signup-box">
                 <p>
-                    Don't have an account? <button className="link-btn" onClick={onSwitchToRegister}>Sign up</button>
+                    {t('login.no_account')} <button className="link-btn" onClick={onSwitchToRegister}>{t('login.signup')}</button>
                 </p>
             </div>
         </div>

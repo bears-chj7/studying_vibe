@@ -1,0 +1,81 @@
+{
+    "app_title": "Heyonjoon's Vibo Coding Play Ground",
+    "login": {
+        "title": "Log in",
+        "placeholder_username": "Phone number, username, or email",
+        "placeholder_password": "Password",
+        "btn_login": "Log in",
+        "btn_logging_in": "Logging in...",
+        "or": "OR",
+        "btn_facebook": "Log in with Facebook",
+        "forgot_password": "Forgot password?",
+        "no_account": "Don't have an account?",
+        "signup": "Sign up"
+    },
+    "register": {
+        "title": "Sign up",
+        "subtitle": "Sign up to see photos and videos from your friends.",
+        "placeholder_email": "Mobile Number or Email",
+        "placeholder_name": "Full Name",
+        "placeholder_username": "Username",
+        "placeholder_password": "Password",
+        "placeholder_confirm_password": "Confirm Password",
+        "btn_signup": "Sign up",
+        "terms": "By signing up, you agree to our Terms, Data Policy and Cookies Policy.",
+        "have_account": "Have an account?",
+        "login": "Log in"
+    },
+    "sidebar": {
+        "greeting": "Hello, {{name}}",
+        "menu_chat": "Chat",
+        "menu_user_info": "User Info",
+        "menu_documents": "Documents",
+        "menu_users": "Users",
+        "menu_settings": "Settings",
+        "btn_logout": "Logout"
+    },
+    "settings": {
+        "title": "Settings",
+        "model_selection": "Model Selection",
+        "language": "Language",
+        "btn_save": "Save Settings",
+        "btn_back": "Back to Chat",
+        "saved_success": "Settings saved successfully!"
+    },
+    "documents": {
+        "title": "Document Management",
+        "upload_title": "Upload PDF",
+        "btn_upload": "Upload & Ingest",
+        "btn_uploading": "Uploading...",
+        "list_title": "Existing Documents",
+        "no_documents": "No documents found.",
+        "btn_view_vectors": "View Vectors",
+        "btn_delete": "Delete"
+    },
+    "users": {
+        "title": "User Management (ABAC Editor)",
+        "btn_edit": "Edit Attributes",
+        "btn_close_edit": "Close Editor",
+        "add_attribute": "Add New Attribute",
+        "placeholder_value": "Value",
+        "btn_add": "Add",
+        "no_attributes": "No attributes assigned"
+    },
+    "chat": {
+        "title": "Studying Vibe Chat",
+        "placeholder_message": "Ask about your documents...",
+        "btn_send": "Send",
+        "model_display": "Model: {{model}}"
+    },
+    "vector_viewer": {
+        "title": "Vector Chunks: {{filename}}",
+        "loading": "Loading chunks from Vector DB...",
+        "no_chunks": "No chunks found for this file."
+    },
+    "user_info": {
+        "title": "User Information",
+        "label_username": "USERNAME",
+        "label_name": "NAME",
+        "label_attributes": "EXTENDED ATTRIBUTES"
+    }
+}

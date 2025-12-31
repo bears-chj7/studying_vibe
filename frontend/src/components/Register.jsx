@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 const Register = ({ onSwitchToLogin }) => {
+    const { t } = useTranslation();
     const [username, setUsername] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
@@ -50,16 +53,16 @@ const Register = ({ onSwitchToLogin }) => {
             <div className="insta-card">
 
                 <h2 style={{ fontSize: '17px', fontWeight: '600', color: '#8e8e8e', textAlign: 'center', margin: '0 40px 20px' }}>
-                    Sign up to see photos and videos from your friends.
+                    {t('register.subtitle')}
                 </h2>
 
                 <button type="button" className="insta-btn" style={{ width: '100%', display: 'block' }}>
-                    Log in with Facebook
+                    {t('login.btn_facebook')}
                 </button>
 
                 <div className="divider">
                     <div className="line"></div>
-                    <div className="or">OR</div>
+                    <div className="or">{t('login.or')}</div>
                     <div className="line"></div>
                 </div>
 
@@ -70,7 +73,7 @@ const Register = ({ onSwitchToLogin }) => {
                     <div className="input-field">
                         <input
                             type="text"
-                            placeholder="Username"
+                            placeholder={t('register.placeholder_username')}
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -79,7 +82,7 @@ const Register = ({ onSwitchToLogin }) => {
                     <div className="input-field">
                         <input
                             type="text"
-                            placeholder="Full Name"
+                            placeholder={t('register.placeholder_name')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             required
@@ -88,7 +91,7 @@ const Register = ({ onSwitchToLogin }) => {
                     <div className="input-field">
                         <input
                             type="password"
-                            placeholder="Password"
+                            placeholder={t('register.placeholder_password')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -97,7 +100,7 @@ const Register = ({ onSwitchToLogin }) => {
                     <div className="input-field">
                         <input
                             type="password"
-                            placeholder="Confirm Password"
+                            placeholder={t('register.placeholder_confirm_password')}
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
                             required
@@ -109,14 +112,14 @@ const Register = ({ onSwitchToLogin }) => {
                     </p>
 
                     <button type="submit" className="insta-btn" disabled={!username || !name || !password || !confirmPassword || isLoading}>
-                        {isLoading ? 'Signing up...' : 'Sign up'}
+                        {isLoading ? t('register.btn_signup') + '...' : t('register.btn_signup')}
                     </button>
                 </form>
             </div>
 
             <div className="insta-card signup-box">
                 <p>
-                    Have an account? <button className="link-btn" onClick={onSwitchToLogin}>Log in</button>
+                    {t('register.have_account')} <button className="link-btn" onClick={onSwitchToLogin}>{t('register.login')}</button>
                 </p>
             </div>
         </div>

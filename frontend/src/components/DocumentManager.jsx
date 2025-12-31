@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import VectorViewer from './VectorViewer';
+import { useTranslation } from 'react-i18next';
 
 const DocumentManager = ({ user }) => {
+    const { t } = useTranslation();
     const [documents, setDocuments] = useState([]);
     const [uploading, setUploading] = useState(false);
     const [file, setFile] = useState(null);
@@ -100,7 +102,7 @@ const DocumentManager = ({ user }) => {
 
             {/* Upload Section */}
             <div className="insta-card" style={{ alignItems: 'flex-start', marginBottom: '2rem' }}>
-                <h3 style={{ fontSize: '16px', marginBottom: '1rem', fontWeight: '600' }}>Upload PDF</h3>
+                <h3 style={{ fontSize: '16px', marginBottom: '1rem', fontWeight: '600' }}>{t('documents.upload_title')}</h3>
                 <form onSubmit={handleUpload} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', width: '100%' }}>
                     <input
                         id="file-upload"
@@ -115,7 +117,7 @@ const DocumentManager = ({ user }) => {
                         className="insta-btn"
                         style={{ margin: 0, height: 'auto', padding: '8px 16px' }}
                     >
-                        {uploading ? 'Uploading...' : 'Upload & Ingest'}
+                        {uploading ? t('documents.btn_uploading') : t('documents.btn_upload')}
                     </button>
                 </form>
                 {message && (
@@ -127,9 +129,9 @@ const DocumentManager = ({ user }) => {
 
             {/* Document List */}
             <div className="insta-card" style={{ padding: '0', alignItems: 'stretch' }}>
-                <h3 style={{ padding: '1rem', margin: 0, borderBottom: '1px solid #dbdbdb', fontSize: '16px', fontWeight: '600' }}>Existing Documents</h3>
+                <h3 style={{ padding: '1rem', margin: 0, borderBottom: '1px solid #dbdbdb', fontSize: '16px', fontWeight: '600' }}>{t('documents.list_title')}</h3>
                 {documents.length === 0 ? (
-                    <div style={{ padding: '2rem', textAlign: 'center', color: '#8e8e8e' }}>No documents found.</div>
+                    <div style={{ padding: '2rem', textAlign: 'center', color: '#8e8e8e' }}>{t('documents.no_documents')}</div>
                 ) : (
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
                         {documents.map(doc => (
@@ -150,7 +152,7 @@ const DocumentManager = ({ user }) => {
                                         className="insta-btn"
                                         style={{ margin: 0, padding: '4px 12px', fontSize: '12px', background: 'transparent', color: '#0095f6', border: '1px solid #dbdbdb' }}
                                     >
-                                        View Vectors
+                                        {t('documents.btn_view_vectors')}
                                     </button>
                                     <button
                                         onClick={() => handleDelete(doc.id)}
@@ -163,7 +165,7 @@ const DocumentManager = ({ user }) => {
                                             fontSize: '12px'
                                         }}
                                     >
-                                        Delete
+                                        {t('documents.btn_delete')}
                                     </button>
                                 </div>
                             </li>

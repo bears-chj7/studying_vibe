@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
 const UserManager = ({ user }) => {
+    const { t } = useTranslation();
     const ATTRIBUTE_OPTIONS = {
         'access_page': ['documents', 'users', 'chat', 'settings'],
         'action': ['manage_users', 'manage_documents', 'delete_file', 'view_vectors'],
@@ -57,7 +59,7 @@ const UserManager = ({ user }) => {
     return (
         <div style={{ maxWidth: '900px', margin: '0 auto' }}>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem', color: '#262626', fontWeight: '300' }}>
-                User Management (ABAC Editor)
+                {t('users.title')}
             </h2>
 
             {message && (
@@ -79,7 +81,7 @@ const UserManager = ({ user }) => {
                                 className="insta-btn"
                                 style={{ margin: 0, background: editingUser?.id === u.id ? '#fafafa' : '#0095f6', color: editingUser?.id === u.id ? '#262626' : 'white', border: '1px solid #dbdbdb' }}
                             >
-                                {editingUser?.id === u.id ? 'Close Editor' : 'Edit Attributes'}
+                                {editingUser?.id === u.id ? t('users.btn_close_edit') : t('users.btn_edit')}
                             </button>
                         </div>
 
@@ -106,14 +108,14 @@ const UserManager = ({ user }) => {
                                     ))
                                 ))
                             ) : (
-                                <span style={{ color: '#8e8e8e', fontSize: '12px' }}>No attributes assigned</span>
+                                <span style={{ color: '#8e8e8e', fontSize: '12px' }}>{t('users.no_attributes')}</span>
                             )}
                         </div>
 
                         {/* Edit Form */}
                         {editingUser?.id === u.id && (
                             <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid #efefef' }}>
-                                <h4 style={{ fontSize: '14px', marginBottom: '8px' }}>Add New Attribute</h4>
+                                <h4 style={{ fontSize: '14px', marginBottom: '8px' }}>{t('users.add_attribute')}</h4>
                                 <form onSubmit={handleAddSubmit} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                                     <select
                                         value={newKey}
@@ -140,13 +142,13 @@ const UserManager = ({ user }) => {
                                     ) : (
                                         <input
                                             type="text"
-                                            placeholder="Value"
+                                            placeholder={t('users.placeholder_value')}
                                             value={newValue}
                                             onChange={(e) => setNewValue(e.target.value)}
                                             style={{ flex: 1, padding: '6px', borderRadius: '4px', border: '1px solid #dbdbdb' }}
                                         />
                                     )}
-                                    <button type="submit" className="insta-btn" style={{ margin: 0 }}>Add</button>
+                                    <button type="submit" className="insta-btn" style={{ margin: 0 }}>{t('users.btn_add')}</button>
                                 </form>
                             </div>
                         )}
