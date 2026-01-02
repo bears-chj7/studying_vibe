@@ -25,7 +25,7 @@ const Register = ({ onSwitchToLogin }) => {
         }
 
         try {
-            const response = await fetch('http://localhost:5000/api/register', {
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -108,7 +108,7 @@ const Register = ({ onSwitchToLogin }) => {
                     </div>
 
                     <p style={{ fontSize: '12px', color: '#8e8e8e', textAlign: 'center', margin: '15px 0' }}>
-                        People who use our service may have uploaded your contact information to Instagram. <a href="#" style={{ fontWeight: '600', color: '#8e8e8e', textDecoration: 'none' }}>Learn More</a>
+                        {t('register.disclaimer_ai')}
                     </p>
 
                     <button type="submit" className="insta-btn" disabled={!username || !name || !password || !confirmPassword || isLoading}>

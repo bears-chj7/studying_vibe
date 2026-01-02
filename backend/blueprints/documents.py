@@ -139,7 +139,7 @@ def upload_document():
 @documents_bp.route('/api/documents/<int:doc_id>', methods=['DELETE'])
 @check_abac({'access_page': 'documents'})
 def delete_document(doc_id):
-    username = request.args.get('username') # required for auth decorator
+    # username = request.headers.get('X-Username') # Handled by auth_middleware
     
     conn = create_connection()
     try:

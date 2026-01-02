@@ -19,7 +19,7 @@
     },
     "register": {
         "title": "가입하기",
-        "subtitle": "친구들의 사진과 동영상을 보려면 가입하세요.",
+        "subtitle": "다양한 대입 정보를 얻으려면 가입하세요.",
         "placeholder_email": "휴대폰 번호 또는 이메일",
         "placeholder_name": "성명",
         "placeholder_username": "사용자 이름",
@@ -28,7 +28,8 @@
         "btn_signup": "가입하기",
         "terms": "가입하면 저희의 약관, 데이터 정책 및 쿠키 정책에 동의하게 됩니다.",
         "have_account": "계정이 있으신가요?",
-        "login": "로그인"
+        "login": "로그인",
+        "disclaimer_ai": "저희는 학습 자료를 효율적으로 정리하고 분석하기 위해 AI를 사용합니다."
     },
     "sidebar": {
         "greeting": "환영합니다, {{name}}님",
@@ -101,7 +102,7 @@
         "no_attributes": "부여된 권한 없음"
     },
     "chat": {
-        "title": "바이브 학습 챗봇",
+        "title": "대입 도움미 챗봇",
         "placeholder_message": "문서 내용에 대해 물어보세요...",
         "btn_send": "전송",
         "model_display": "현재 모델: {{model}}",

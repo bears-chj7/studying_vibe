@@ -8,7 +8,7 @@ const Admin = ({ user, onBack }) => {
         setIsLoading(true);
         setStatus('Starting ingestion...');
         try {
-            const response = await fetch('http://localhost:5000/api/admin/ingest', {
+            const response = await fetch('/api/admin/ingest', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

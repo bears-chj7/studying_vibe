@@ -1,5 +1,5 @@
 {
-    "app_title": "Heyonjoon's Vibo Coding Play Ground",
+    "app_title": "Hyeonjoon's Vibo Coding Play Ground",
     "common": {
         "save": "Save"
     },
@@ -17,7 +17,7 @@
     },
     "register": {
         "title": "Sign up",
-        "subtitle": "Sign up to see photos and videos from your friends.",
+        "subtitle": "Sign up to get various college admission information.",
         "placeholder_email": "Mobile Number or Email",
         "placeholder_name": "Full Name",
         "placeholder_username": "Username",
@@ -26,7 +26,8 @@
         "btn_signup": "Sign up",
         "terms": "By signing up, you agree to our Terms, Data Policy and Cookies Policy.",
         "have_account": "Have an account?",
-        "login": "Log in"
+        "login": "Log in",
+        "disclaimer_ai": "We use AI to organize and analyze your study materials efficiently."
     },
     "sidebar": {
         "greeting": "Hello, {{name}}",

@@ -26,12 +26,17 @@ def check_abac(required_attributes):
             # but for a GET request (like listing docs), we might need query params or headers.
             # Let's try to get 'username' from request.json or request.args.
             
-            username = None
-            if request.is_json:
-                username = request.get_json().get('username')
-            elif request.form:
-                username = request.form.get('username')
+            # Priority: Header (X-Username) > JSON Body > Form Data > Query Args (Legacy/Fallback)
+            username = request.headers.get('X-Username')
+
+            if not username:
+                if request.is_json:
+                    username = request.get_json().get('username')
+                elif request.form:
+                    # Handle multipart/form-data for uploads
+                    username = request.form.get('username')
             
+            # Fallback to args (to be removed later, or kept for strict debugging/legacy)
             if not username:
                 username = request.args.get('username')
             

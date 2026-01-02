@@ -51,7 +51,7 @@ function App() {
 
     return (
         <div className="App">
-            <h1 className="landing-title">Heyonjoon's Vibo Coding Play Ground</h1>
+            <h1 className="landing-title">Hyeonjoon's Vibo Coding Play Ground</h1>
             {view === 'login' ? (
                 <Login onLogin={handleLogin} onSwitchToRegister={() => setView('register')} />
             ) : (

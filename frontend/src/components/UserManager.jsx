@@ -24,7 +24,9 @@ const UserManager = ({ user }) => {
 
     const fetchUsers = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/users?username=${user.username}`);
+            const response = await axios.get(`/api/users`, {
+                headers: { 'X-Username': user.username }
+            });
             setUsers(response.data);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -36,10 +38,12 @@ const UserManager = ({ user }) => {
         if (action === 'remove' && !window.confirm(`Remove attribute ${key}=${value}?`)) return;
 
         try {
-            await axios.post(`http://localhost:5000/api/users/${targetUserId}/attributes?username=${user.username}`, {
+            await axios.post(`/api/users/${targetUserId}/attributes`, {
                 action,
                 key,
                 value
+            }, {
+                headers: { 'X-Username': user.username }
             });
             setMessage({ type: 'success', text: `Attribute ${action}ed successfully` });
             fetchUsers(); // Refresh list to see changes

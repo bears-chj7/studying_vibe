@@ -41,7 +41,9 @@ const DocumentManager = ({ user }) => {
 
     const fetchDocuments = async () => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/documents?username=${user.username}&page=${page}&limit=${limit}`);
+            const response = await axios.get(`/api/documents?page=${page}&limit=${limit}`, {
+                headers: { 'X-Username': user.username }
+            });
             if (response.data.documents) {
                 setDocuments(response.data.documents);
                 setTotalDocs(response.data.total);
@@ -80,7 +82,7 @@ const DocumentManager = ({ user }) => {
         formData.append('chunk_overlap', ingestSettings.chunkOverlap);
 
         try {
-            const response = await fetch('http://localhost:5000/api/documents', {
+            const response = await fetch('/api/documents', {
                 method: 'POST',
                 body: formData,
             });
@@ -152,7 +154,7 @@ const DocumentManager = ({ user }) => {
         formData.append('chunk_overlap', ingestSettings.chunkOverlap);
 
         try {
-            const response = await fetch(`http://localhost:5000/api/documents/${doc.id}/reingest`, {
+            const response = await fetch(`/api/documents/${doc.id}/reingest`, {
                 method: 'POST',
                 body: formData,
             });
@@ -179,7 +181,7 @@ const DocumentManager = ({ user }) => {
         formData.append('chunk_overlap', ingestSettings.chunkOverlap);
 
         try {
-            const response = await fetch(`http://localhost:5000/api/documents/reingest-all`, {
+            const response = await fetch(`/api/documents/reingest-all`, {
                 method: 'POST',
                 body: formData,
             });
@@ -238,7 +240,9 @@ const DocumentManager = ({ user }) => {
         if (!window.confirm("Are you sure you want to delete this document?")) return;
 
         try {
-            await axios.delete(`http://localhost:5000/api/documents/${id}?username=${user.username}`);
+            await axios.delete(`/api/documents/${id}`, {
+                headers: { 'X-Username': user.username }
+            });
             setMessage({ type: 'success', text: 'Document deleted' });
             fetchDocuments();
         } catch (error) {
@@ -249,8 +253,10 @@ const DocumentManager = ({ user }) => {
 
     const handleDescriptionUpdate = async (id, newDescription) => {
         try {
-            await axios.put(`http://localhost:5000/api/documents/${id}?username=${user.username}`, {
+            await axios.put(`/api/documents/${id}`, {
                 description: newDescription
+            }, {
+                headers: { 'X-Username': user.username }
             });
             fetchDocuments(); // Refresh list to show new description
 
@@ -271,7 +277,9 @@ const DocumentManager = ({ user }) => {
         setViewerOpen(true);
         setChunksLoading(true);
         try {
-            const response = await axios.get(`http://localhost:5000/api/documents/${doc.id}/chunks?username=${user.username}`);
+            const response = await axios.get(`/api/documents/${doc.id}/chunks`, {
+                headers: { 'X-Username': user.username }
+            });
             setChunks(response.data);
         } catch (error) {
             console.error("Error fetching chunks:", error);

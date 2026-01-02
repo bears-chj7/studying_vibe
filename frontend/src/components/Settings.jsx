@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 
 const Settings = ({ onBack }) => {
     const { t, i18n } = useTranslation();
-    const [selectedModel, setSelectedModel] = useState('ollama');
-    const [language, setLanguage] = useState(i18n.language || 'en');
+    const [selectedModel, setSelectedModel] = useState('gemini');
+    const [language, setLanguage] = useState(i18n.language || 'ko');
 
     useEffect(() => {
         const storedModel = localStorage.getItem('chatModel');
@@ -12,6 +12,17 @@ const Settings = ({ onBack }) => {
             setSelectedModel(storedModel);
         }
     }, []);
+
+    // Close on ESC key
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                onBack();
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [onBack]);
 
     const handleSave = () => {
         localStorage.setItem('chatModel', selectedModel);

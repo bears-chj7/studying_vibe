@@ -20,7 +20,11 @@ i18n
     .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         resources,
-        fallbackLng: 'en', // default language
+        detection: {
+            order: ['localStorage', 'cookie'],
+            caches: ['localStorage', 'cookie']
+        },
+        fallbackLng: 'ko', // default language
         debug: true,
 
         interpolation: {

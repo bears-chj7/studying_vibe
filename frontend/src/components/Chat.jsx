@@ -27,7 +27,7 @@ const Chat = ({ user, onLogout, onOpenSettings }) => {
     }, [messages, user]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
-    const [currentModel, setCurrentModel] = useState('ollama');
+    const [currentModel, setCurrentModel] = useState('gemini');
 
     const messagesEndRef = useRef(null);
 
@@ -56,7 +56,7 @@ const Chat = ({ user, onLogout, onOpenSettings }) => {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/chat', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -105,7 +105,6 @@ const Chat = ({ user, onLogout, onOpenSettings }) => {
                 <div>
                     <button onClick={handleResetChat} style={styles.settingsBtn}>{t('chat.btn_new_chat')}</button>
                     <button onClick={onOpenSettings} style={styles.settingsBtn}>{t('sidebar.menu_settings')}</button>
-                    <button onClick={onLogout} style={styles.logoutBtn}>{t('sidebar.btn_logout')}</button>
                 </div>
             </div>
 
@@ -183,13 +182,6 @@ const styles = {
         fontWeight: '600',
         marginRight: '15px',
         cursor: 'pointer',
-    },
-    logoutBtn: {
-        background: 'none',
-        border: '1px solid #dbdbdb',
-        padding: '5px 10px',
-        cursor: 'pointer',
-        borderRadius: '3px',
     },
     chatWindow: {
         flex: 1,
