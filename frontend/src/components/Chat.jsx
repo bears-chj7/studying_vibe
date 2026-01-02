@@ -1,9 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
-const Chat = ({ onLogout, onOpenSettings }) => {
+const Chat = ({ user, onLogout, onOpenSettings }) => {
     const { t } = useTranslation();
-    const [messages, setMessages] = useState([]);
+    const [messages, setMessages] = useState(() => {
+        if (user && user.username) {
+            const saved = sessionStorage.getItem(`chat_history_${user.username}`);
+            return saved ? JSON.parse(saved) : [];
+        }
+        return [];
+    });
+
+    // ... code ...
+
+    // Note for the model: Since replace_file_content works on chunks, I need to split this into two edits or be careful about the range.
+    // The imports are at the top, the usage is in the render method.
+    // I'll make two calls or one multi_replace_file_content call.
+    // Let's use multi_replace.
+
+    useEffect(() => {
+        if (user && user.username) {
+            sessionStorage.setItem(`chat_history_${user.username}`, JSON.stringify(messages));
+        }
+    }, [messages, user]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [currentModel, setCurrentModel] = useState('ollama');
@@ -65,6 +86,15 @@ const Chat = ({ onLogout, onOpenSettings }) => {
         }
     };
 
+    const handleResetChat = () => {
+        if (window.confirm(t('chat.confirm_reset'))) {
+            setMessages([]);
+            if (user && user.username) {
+                sessionStorage.removeItem(`chat_history_${user.username}`);
+            }
+        }
+    };
+
     return (
         <div style={styles.container}>
             <div style={styles.header}>
@@ -73,6 +103,7 @@ const Chat = ({ onLogout, onOpenSettings }) => {
                     <span style={styles.modelBadge}>{t('chat.model_display', { model: currentModel === 'ollama' ? 'Llama 3.2:1b' : 'Gemini' })}</span>
                 </div>
                 <div>
+                    <button onClick={handleResetChat} style={styles.settingsBtn}>{t('chat.btn_new_chat')}</button>
                     <button onClick={onOpenSettings} style={styles.settingsBtn}>{t('sidebar.menu_settings')}</button>
                     <button onClick={onLogout} style={styles.logoutBtn}>{t('sidebar.btn_logout')}</button>
                 </div>
@@ -86,7 +117,12 @@ const Chat = ({ onLogout, onOpenSettings }) => {
                         backgroundColor: msg.sender === 'user' ? '#0095f6' : (msg.sender === 'system' ? '#ffcccc' : '#e0e0e0'),
                         color: msg.sender === 'user' ? 'white' : 'black',
                     }}>
-                        <strong>{msg.sender === 'user' ? 'You' : (msg.sender === 'ollama' || msg.sender === 'gemini' ? 'AI' : 'System')}:</strong> {msg.text}
+                        <strong>{msg.sender === 'user' ? 'You' : (msg.sender === 'ollama' || msg.sender === 'gemini' ? 'AI' : 'System')}:</strong>
+                        <div style={{ marginTop: '5px' }}>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                {msg.text}
+                            </ReactMarkdown>
+                        </div>
                     </div>
                 ))}
                 {isLoading && <div style={styles.loading}>{currentModel} is thinking...</div>}

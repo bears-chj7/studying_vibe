@@ -37,6 +37,7 @@
         "menu_documents": "문서 관리",
         "menu_users": "사용자 관리",
         "menu_settings": "설정",
+        "menu_legal": "법적 고지",
         "btn_logout": "로그아웃"
     },
     "settings": {
@@ -79,6 +80,17 @@
         "current_config": "현재 설정: 크기 {{size}} | 중복 {{overlap}}",
         "btn_config": "설정 변경"
     },
+    "legal": {
+        "title": "법적 고지 및 보안 정책",
+        "security_title": "보안 조치",
+        "security_content": "우리는 산업 표준 기술을 사용하여 귀하의 데이터를 안전하게 보호합니다.",
+        "security_point_1": "접근 제어: 역할 및 속성 기반 접근 제어(ABAC)를 통해 데이터 접근을 제한합니다.",
+        "security_point_2": "암호화: 비밀번호는 SHA-256 알고리즘으로 암호화되어 저장됩니다.",
+        "storage_title": "데이터 저장 정책",
+        "storage_content": "사용자가 직접 입력한 이름 이외 개인 정보는 보관하지 않습니다.",
+        "chat_privacy_title": "채팅 프라이버시",
+        "chat_storage": "채팅 기록은 귀하의 브라우저(세션 스토리지)에 임시로 저장됩니다. 서버에는 저장되지 않습니다. 새로고침 시에는 유지되지만, 브라우저/탭을 닫거나 로그아웃 시 즉시 삭제됩니다."
+    },
     "users": {
         "title": "사용자 관리 (ABAC 에디터)",
         "btn_edit": "권한 편집",
@@ -92,7 +104,9 @@
         "title": "바이브 학습 챗봇",
         "placeholder_message": "문서 내용에 대해 물어보세요...",
         "btn_send": "전송",
-        "model_display": "사용 모델: {{model}}"
+        "model_display": "현재 모델: {{model}}",
+        "btn_new_chat": "새로 시작",
+        "confirm_reset": "새로운 대화를 시작하시겠습니까? 현재 대화 내용은 삭제됩니다."
     },
     "vector_viewer": {
         "title": "벡터 청크 뷰어: {{filename}}",

@@ -35,6 +35,7 @@
         "menu_documents": "Documents",
         "menu_users": "Users",
         "menu_settings": "Settings",
+        "menu_legal": "Legal Notice",
         "btn_logout": "Logout"
     },
     "settings": {
@@ -77,6 +78,17 @@
         "current_config": "Current Config: Chunk Size {{size}} | Overlap {{overlap}}",
         "btn_config": "Configure"
     },
+    "legal": {
+        "title": "Legal Notice & Security Policy",
+        "security_title": "Security Measures",
+        "security_content": "We prioritize your data security using widespread industry standards.",
+        "security_point_1": "Access Control: Role-based and Attribute-based Access Control (ABAC) limits data access.",
+        "security_point_2": "Encryption: Passwords are hashed using SHA-256 before storage.",
+        "storage_title": "Data Storage Policy",
+        "storage_content": "We do not store any personal information other than the name you enter directly in your user account.",
+        "chat_privacy_title": "Chat Privacy",
+        "chat_storage": "Your chat history is stored temporarily in your browser (SessionStorage). It is NOT stored on our servers. It persists across refreshes but is automatically deleted when you close the browser/tab or log out."
+    },
     "users": {
         "title": "User Management (ABAC Editor)",
         "btn_edit": "Edit Attributes",
@@ -90,7 +102,9 @@
         "title": "Studying Vibe Chat",
         "placeholder_message": "Ask about your documents...",
         "btn_send": "Send",
-        "model_display": "Model: {{model}}"
+        "model_display": "Current Model: {{model}}",
+        "btn_new_chat": "New Chat",
+        "confirm_reset": "Are you sure you want to start a new chat? Current history will be cleared."
     },
     "vector_viewer": {
         "title": "Vector Chunks: {{filename}}",

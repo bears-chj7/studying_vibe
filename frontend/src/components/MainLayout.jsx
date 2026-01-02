@@ -53,6 +53,13 @@ const MainLayout = ({ user, currentView, onViewChange, onLogout, children }) => 
                     >
                         {t('sidebar.menu_settings')}
                     </button>
+
+                    <button
+                        className={`nav-item ${currentView === 'legal' ? 'active' : ''}`}
+                        onClick={() => onViewChange('legal')}
+                    >
+                        {t('sidebar.menu_legal')}
+                    </button>
                 </nav>
 
                 <div className="sidebar-footer">
