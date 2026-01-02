@@ -1,5 +1,8 @@
 {
     "app_title": "현준이의 바이브 코딩 놀이터",
+    "common": {
+        "save": "저장"
+    },
     "login": {
         "title": "로그인",
         "placeholder_username": "전화번호, 사용자 이름 또는 이메일",
@@ -9,6 +12,8 @@
         "or": "또는",
         "btn_facebook": "Facebook으로 로그인",
         "forgot_password": "비밀번호를 잊으셨나요?",
+        "confirm_password_mismatch": "비밀번호가 일치하지 않습니다!",
+        "save": "저장",
         "no_account": "계정이 없으신가요?",
         "signup": "가입하기"
     },
@@ -50,7 +55,29 @@
         "list_title": "문서 목록",
         "no_documents": "문서가 없습니다.",
         "btn_view_vectors": "벡터 보기",
-        "btn_delete": "삭제"
+        "btn_delete": "삭제",
+        "no_description": "설명 없음",
+        "click_to_add": "클릭하여 추가",
+        "click_to_edit": "클릭하여 설명 수정",
+        "btn_edit": "수정",
+        "prompt_new_desc": "새로운 설명을 입력하세요:",
+        "success_update": "설명이 수정되었습니다",
+        "fail_update": "설명 수정 실패",
+        "btn_reingest": "재변환",
+        "btn_reingest_all": "전체 재변환",
+        "confirm_reingest": "현재 설정으로 이 파일을 다시 변환하시겠습니까?",
+        "confirm_reingest_all": "현재 설정으로 모든 문서를 다시 변환하시겠습니까? 시간이 오래 걸릴 수 있습니다.",
+        "reingest_all_progress": "진행 중 {{current}} / {{total}}: {{filename}}",
+        "total_count": "총 {{count}}개",
+        "rows_per_page": "페이지 당 개수:",
+        "page_info": "{{current}} / {{total}}"
+    },
+    "ingestion": {
+        "title": "PDF 변환 설정",
+        "chunk_size": "청크 크기 (Chunk Size)",
+        "chunk_overlap": "청크 중복 (Chunk Overlap)",
+        "current_config": "현재 설정: 크기 {{size}} | 중복 {{overlap}}",
+        "btn_config": "설정 변경"
     },
     "users": {
         "title": "사용자 관리 (ABAC 에디터)",

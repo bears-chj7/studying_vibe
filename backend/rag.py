@@ -3,7 +3,10 @@ from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import SentenceTransformerEmbeddings
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 import shutil
+import pdf2image
+import pytesseract
 
 class RAGService:
     def __init__(self, persist_directory="./chroma_db_v2"):
@@ -11,20 +14,50 @@ class RAGService:
         self.embedding_function = SentenceTransformerEmbeddings(model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
         self.db = Chroma(persist_directory=self.persist_directory, embedding_function=self.embedding_function)
 
-    def ingest_file(self, file_path):
-        """Ingests a single PDF file with idempotent IDs."""
+    def ingest_file(self, file_path, chunk_size=1000, chunk_overlap=200):
+        """Ingests a single PDF file with idempotent IDs. Yields progress updates."""
         if not file_path.endswith(".pdf"):
-            return False, "Not a PDF file"
+            yield {"status": "error", "message": "Not a PDF file"}
+            return
             
         try:
+            yield {"status": "info", "message": "Loading PDF file..."}
             loader = PyPDFLoader(file_path)
             documents = loader.load()
             
-            if not documents:
-                return False, "No content found in PDF"
+            # Check if text was extracted. If totally empty or very short, try OCR.
+            total_text_len = sum([len(doc.page_content.strip()) for doc in documents])
+            
+            if total_text_len < 50: # Threshold for "empty" or image-only PDF
+                print(f"Low text content detected ({total_text_len} chars). Attempting OCR for {file_path}...")
+                yield {"status": "info", "message": "Image-only PDF detected. Starting OCR..."}
+                
+                try:
+                    images = pdf2image.convert_from_path(file_path)
+                    total_pages = len(images)
+                    documents = []
+                    
+                    for i, image in enumerate(images):
+                        yield {"status": "info", "message": f"OCR Processing page {i+1}/{total_pages}..."}
+                        # Extract text with Korean and English support
+                        text = pytesseract.image_to_string(image, lang='kor+eng')
+                        if text.strip():
+                            documents.append(Document(page_content=text, metadata={"source": file_path, "page": i}))
+                    
+                    if not documents:
+                        yield {"status": "error", "message": "No content found in PDF even with OCR"}
+                        return
+                        
+                except Exception as ocr_e:
+                    print(f"OCR Failed: {ocr_e}")
+                    yield {"status": "error", "message": f"OCR Failed: {str(ocr_e)}"}
+                    return
 
-            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+            yield {"status": "info", "message": f"Splitting text ({len(documents)} pages)..."}
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
             chunks = text_splitter.split_documents(documents)
+            
+            yield {"status": "info", "message": f"Generated {len(chunks)} chunks. Indexing to Vector DB..."}
             
             # Generate unique IDs based on filename and chunk index to prevent duplicates
             filename = os.path.basename(file_path)
@@ -33,12 +66,15 @@ class RAGService:
             # Add metadata for deletion
             for chunk in chunks:
                 chunk.metadata['source_file'] = filename
+            
+            # Clean up old chunks first to avoid ghosts
+            self.delete_file(filename)
                 
             self.db.add_documents(chunks, ids=ids)
-            return True, f"Ingested {len(chunks)} chunks from {filename}"
+            yield {"status": "success", "message": f"Ingested {len(chunks)} chunks from {filename}"}
             
         except Exception as e:
-            return False, str(e)
+            yield {"status": "error", "message": str(e)}
 
     def delete_file(self, filename):
         """Removes documents associated with a specific file."""

@@ -1,5 +1,8 @@
 {
     "app_title": "Heyonjoon's Vibo Coding Play Ground",
+    "common": {
+        "save": "Save"
+    },
     "login": {
         "title": "Log in",
         "placeholder_username": "Phone number, username, or email",
@@ -50,7 +53,29 @@
         "list_title": "Existing Documents",
         "no_documents": "No documents found.",
         "btn_view_vectors": "View Vectors",
-        "btn_delete": "Delete"
+        "btn_delete": "Delete",
+        "no_description": "No description",
+        "click_to_add": "click to add",
+        "click_to_edit": "Click to edit description",
+        "btn_edit": "Edit",
+        "prompt_new_desc": "Enter new description:",
+        "success_update": "Description updated",
+        "fail_update": "Failed to update description",
+        "btn_reingest": "Re-ingest",
+        "btn_reingest_all": "Re-ingest All",
+        "confirm_reingest": "Re-ingest this file with current settings?",
+        "confirm_reingest_all": "Re-ingest ALL documents with current settings? This may take a while.",
+        "reingest_all_progress": "Processing {{current}} / {{total}}: {{filename}}",
+        "total_count": "Total: {{count}}",
+        "rows_per_page": "Rows per page:",
+        "page_info": "{{current}} of {{total}}"
+    },
+    "ingestion": {
+        "title": "PDF Conversion Settings",
+        "chunk_size": "Chunk Size",
+        "chunk_overlap": "Chunk Overlap",
+        "current_config": "Current Config: Chunk Size {{size}} | Overlap {{overlap}}",
+        "btn_config": "Configure"
     },
     "users": {
         "title": "User Management (ABAC Editor)",

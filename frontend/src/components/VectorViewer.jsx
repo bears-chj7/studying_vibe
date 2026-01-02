@@ -1,9 +1,11 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const VectorViewer = ({ isOpen, onClose, filename, chunks, loading }) => {
+const VectorViewer = ({ isOpen, onClose, document, onDescriptionUpdate, chunks, loading }) => {
     const { t } = useTranslation();
-    if (!isOpen) return null;
+    if (!isOpen || !document) return null;
+
+    const { filename, description, id } = document;
 
     return (
         <div style={{
@@ -25,17 +27,63 @@ const VectorViewer = ({ isOpen, onClose, filename, chunks, loading }) => {
                 display: 'flex',
                 flexDirection: 'column',
                 position: 'relative',
+                borderRadius: '16px',
+                boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                overflow: 'hidden',
                 padding: '0'
             }}>
                 <div style={{
-                    padding: '1rem',
-                    borderBottom: '1px solid #dbdbdb',
+                    padding: '1.5rem 2rem',
+                    borderBottom: '1px solid #f0f0f0',
                     display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center'
+                    flexDirection: 'column',
+                    position: 'relative',
+                    paddingRight: '100px' // Ensure space for the close button
                 }}>
-                    <h3 style={{ margin: 0, fontSize: '18px' }}>{t('vector_viewer.title', { filename })}</h3>
-                    <button onClick={onClose} style={{ border: 'none', background: 'none', fontSize: '24px', cursor: 'pointer' }}>×</button>
+                    <button
+                        onClick={onClose}
+                        style={{
+                            position: 'absolute',
+                            top: '1.5rem',
+                            right: '1.5rem',
+                            background: 'none',
+                            border: 'none',
+                            fontSize: '1.5rem',
+                            color: '#666',
+                            cursor: 'pointer',
+                            padding: 0,
+                            lineHeight: 1
+                        }}
+                        title={t('common.close') || "Close"}
+                    >
+                        ×
+                    </button>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                        <h3 style={{ margin: 0, fontSize: '1.25rem', fontWeight: '600', color: '#111' }}>
+                            {t('vector_viewer.title', { filename })}
+                        </h3>
+                        <div style={{ fontSize: '14px', color: '#8e8e8e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span>{description || t('documents.no_description')}</span>
+                            <button
+                                onClick={() => {
+                                    const newDesc = prompt(t('documents.prompt_new_desc'), description || "");
+                                    if (newDesc !== null) onDescriptionUpdate(id, newDesc);
+                                }}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid #dbdbdb',
+                                    borderRadius: '4px',
+                                    cursor: 'pointer',
+                                    fontSize: '10px',
+                                    padding: '2px 6px',
+                                    color: '#0095f6'
+                                }}
+                            >
+                                {t('documents.btn_edit')}
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <div style={{ flex: 1, overflowY: 'auto', padding: '1rem', background: '#fafafa' }}>

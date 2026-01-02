@@ -1,5 +1,6 @@
 import os
-from flask import Blueprint, request, jsonify, current_app
+from flask import Blueprint, request, jsonify, current_app, Response
+import json
 from database import create_connection
 from auth_middleware import check_abac
 from werkzeug.utils import secure_filename
@@ -23,15 +24,52 @@ if not os.path.exists(UPLOAD_FOLDER):
 @documents_bp.route('/api/documents', methods=['GET'])
 @check_abac({'access_page': 'documents'}) # Updated to new attribute logic
 def get_documents():
+    page = int(request.args.get('page', 1))
+    limit = int(request.args.get('limit', 10))
+    offset = (page - 1) * limit
+
     conn = create_connection()
     if not conn:
         return jsonify({"error": "DB Connection failed"}), 500
     
     try:
         cursor = conn.cursor(dictionary=True)
-        cursor.execute("SELECT id, filename, created_at FROM documents ORDER BY created_at DESC")
+        
+        # Get total count
+        cursor.execute("SELECT COUNT(*) as total FROM documents")
+        total_result = cursor.fetchone()
+        total_docs = total_result['total'] if total_result else 0
+        
+        # Get paginated documents
+        cursor.execute("SELECT id, filename, description, created_at FROM documents ORDER BY created_at DESC LIMIT %s OFFSET %s", (limit, offset))
         docs = cursor.fetchall()
-        return jsonify(docs), 200
+        
+        total_pages = (total_docs + limit - 1) // limit
+
+        return jsonify({
+            "documents": docs,
+            "total": total_docs,
+            "page": page,
+            "limit": limit,
+            "total_pages": total_pages
+        }), 200
+    finally:
+        conn.close()
+
+@documents_bp.route('/api/documents/<int:doc_id>', methods=['PUT'])
+@check_abac({'access_page': 'documents'})
+def update_document(doc_id):
+    data = request.get_json()
+    description = data.get('description')
+    
+    conn = create_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("UPDATE documents SET description = %s WHERE id = %s", (description, doc_id))
+        conn.commit()
+        return jsonify({"message": "Document updated"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 
@@ -80,12 +118,16 @@ def upload_document():
                            (filename, filepath, user_id))
             conn.commit()
             
-            # RAG Ingest
-            success, msg = rag_service.ingest_file(filepath)
-            if not success:
-                return jsonify({"warning": "File saved but RAG ingestion failed", "rag_error": msg}), 201
+            # Get settings from form data
+            chunk_size = int(request.form.get('chunk_size', 1000))
+            chunk_overlap = int(request.form.get('chunk_overlap', 200))
+
+            # RAG Ingest with Streaming Response
+            def generate():
+                for update in rag_service.ingest_file(filepath, chunk_size=chunk_size, chunk_overlap=chunk_overlap):
+                    yield json.dumps(update) + "\n"
             
-            return jsonify({"message": "File uploaded and ingested successfully"}), 201
+            return Response(generate(), mimetype='application/x-ndjson')
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
@@ -151,5 +193,59 @@ def get_document_chunks(doc_id):
         
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+    finally:
+        conn.close()
+
+@documents_bp.route('/api/documents/<int:doc_id>/reingest', methods=['POST'])
+@check_abac({'access_page': 'documents'})
+def reingest_document(doc_id):
+    conn = create_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT filename, filepath FROM documents WHERE id = %s", (doc_id,))
+        doc = cursor.fetchone()
+        
+        if not doc:
+            return jsonify({"error": "Document not found"}), 404
+
+        chunk_size = int(request.form.get('chunk_size', 1000))
+        chunk_overlap = int(request.form.get('chunk_overlap', 200))
+
+        def generate():
+            yield json.dumps({"status": "info", "message": f"Starting re-ingestion for {doc['filename']}..."}) + "\n"
+            for update in rag_service.ingest_file(doc['filepath'], chunk_size=chunk_size, chunk_overlap=chunk_overlap):
+                yield json.dumps(update) + "\n"
+
+        return Response(generate(), mimetype='application/x-ndjson')
+
+    finally:
+        conn.close()
+
+@documents_bp.route('/api/documents/reingest-all', methods=['POST'])
+@check_abac({'access_page': 'documents'})
+def reingest_all_documents():
+    conn = create_connection()
+    try:
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, filename, filepath FROM documents ORDER BY created_at DESC")
+        documents = cursor.fetchall()
+        
+        chunk_size = int(request.form.get('chunk_size', 1000))
+        chunk_overlap = int(request.form.get('chunk_overlap', 200))
+
+        def generate():
+            total_docs = len(documents)
+            for idx, doc in enumerate(documents):
+                yield json.dumps({"status": "info", "message": f"[{idx+1}/{total_docs}] Processing {doc['filename']}..."}) + "\n"
+                for update in rag_service.ingest_file(doc['filepath'], chunk_size=chunk_size, chunk_overlap=chunk_overlap):
+                    # Prefix update messages to indicate which file is being processed
+                    if update['status'] == 'info':
+                        update['message'] = f"[{doc['filename']}] {update['message']}"
+                    yield json.dumps(update) + "\n"
+            
+            yield json.dumps({"status": "success", "message": f"Completed re-ingestion of {total_docs} documents."}) + "\n"
+
+        return Response(generate(), mimetype='application/x-ndjson')
+
     finally:
         conn.close()
